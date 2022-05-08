@@ -41,4 +41,28 @@ contract Library is Ownable {
 
         return true;
     }
+
+    function addBook(string memory _isbn, string memory _title, string memory _author, uint _numberOfCopies) public onlyOwner() {
+        //There is no reason to add book if you don't have it
+        require(_numberOfCopies > 0);
+        Book storage newBook = Books[_isbn];
+
+        emit AddedBook(_isbn, _numberOfCopies);
+        registeredBooksCount += _numberOfCopies;
+
+        //If the book was already registered we should add copies
+        if (wasBookRegistered(_isbn)) {
+            newBook.availableCopies+= _numberOfCopies;
+            return;
+        }
+
+        newBook.isbn = _isbn;
+        newBook.title = _title;
+        newBook.author = _author;
+        newBook.availableCopies = _numberOfCopies;
+
+        registeredBooks.push(_isbn);
+    } 
+
+   
 }
