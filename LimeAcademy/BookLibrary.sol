@@ -105,4 +105,7 @@ contract Library is Ownable {
         emit ReturnedBook(msg.sender, _isbn);
     }
 
+    function getBorrowersByISBN(string memory _isbn) public view returns(address[] memory) {
+       return registerBook.bookToAddresses[_isbn];
+    }
 }
