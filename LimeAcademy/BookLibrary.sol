@@ -3,17 +3,42 @@ pragma solidity ^0.8.0;
 
 import "./Ownable.sol";
 
-contract Library is Ownable{
-    string private lib_name;
-    mapping(string => uint) internal Books;
+contract Library is Ownable {
+    string internal lib_name;
 
     struct Book {
         string isbn;
         string title;
         string author;
+        uint availableCopies;
     }
+
+    struct Register{
+        mapping(string => address[]) bookToAddresses;  //keep the array of every person that got a given book.
+        mapping(bytes32 => bool) isBorrowedByUser;     //mapping to prevent many copies borrow.
+    }
+
+    mapping(string => Book) internal Books;     //hash table of books for fast search, addition and deletion.
+    string[] private registeredBooks;          //array of isbn's for iterative operations.
+    uint private registeredBooksCount;          //keep all registered books count to prevent iterating if needed.
+    Register private registerBook;
+    
+    //Events for further usage
+    event AddedBook(string memory _isbn, uint _numberOfCopies);
+    event BorrowedBook(address _borrowedBy, string memory _isbn);
+    event ReturnedBook(address _returnedFrom, string memory _isbn);
 
     constructor(string memory _libraryName) onlyOwner(){
         lib_name = _libraryName;
+        registeredBooksCount = 0;
+    }
+
+    function wasBookRegistered(string memory _isbn) internal view returns(bool) {
+        bytes memory tmp = bytes(Books[_isbn].title);
+        if (tmp.length == 0) {
+           return false;
+        } 
+
+        return true;
     }
 }
