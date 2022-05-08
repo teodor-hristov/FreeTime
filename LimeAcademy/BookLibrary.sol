@@ -68,5 +68,22 @@ contract Library is Ownable {
         return registeredBooksCount;
     }
 
+    function getAllAvailableBooks() public view returns(string[] memory) {
+        uint books = registeredBooks.length;
+        string[] memory available = new string[](books);
+        Book memory currentBook;
+        
+        //Iterate through books and pushe them into string arr.
+        for (uint i = 0; i < books; i++) {
+            currentBook = Books[registeredBooks[i]];
+            
+            if (currentBook.availableCopies > 0) {
+                available[i] = string(abi.encodePacked("ISBN: ",currentBook.isbn," TITLE: ", currentBook.title, " AUTHOR: ", currentBook.author));
+            }
+        }
+
+        return available;
+    } 
+
     
 }
