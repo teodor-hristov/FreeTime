@@ -85,5 +85,24 @@ contract Library is Ownable {
         return available;
     } 
 
-    
+    function borrowBook(string memory _isbn) public{
+        require(Books[_isbn].availableCopies > 0);              //You are not the avatar, can't get water from the air...
+        require(!registerBook.isBorrowedByUser[keccak256(abi.encodePacked(msg.sender, _isbn))]); //User can get only one copy of a book.
+
+        registerBook.isBorrowedByUser[keccak256(abi.encodePacked(msg.sender, _isbn))] = true;
+        registerBook.bookToAddresses[_isbn].push(msg.sender);
+        Books[_isbn].availableCopies--;
+
+        emit BorrowedBook(msg.sender, _isbn);
+    }
+
+    function returnBook(string memory _isbn) public {
+        require(registerBook.isBorrowedByUser[keccak256(abi.encodePacked(msg.sender, _isbn))]); //Need to be borrowed by the user to be able to return.
+        
+        registerBook.isBorrowedByUser[keccak256(abi.encodePacked(msg.sender, _isbn))] = false;
+        Books[_isbn].availableCopies++;
+        
+        emit ReturnedBook(msg.sender, _isbn);
+    }
+
 }
