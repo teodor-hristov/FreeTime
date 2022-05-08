@@ -64,5 +64,9 @@ contract Library is Ownable {
         registeredBooks.push(_isbn);
     } 
 
-   
+    function getRegisteredBooksCount() internal view returns(uint) {
+        return registeredBooksCount;
+    }
+
+    
 }
